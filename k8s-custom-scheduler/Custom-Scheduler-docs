@@ -1,0 +1,16 @@
+Create Custom Scheduler Rather to use Default Scheduler. 
+
+cd /etc/kubernetes/manifest/
+cat kube-scheduler
+copy all content of kube-scheduler and paste into a new file “my-scheduler.yaml”.
+vi my-scheduler.yaml
+netstat -taulpn | grep 10259 
+Choose any random port to use with the scheduler. 
+netstat -tulpn | grep 10282
+Change the Host Port also. 
+Now create a scheduler pod	# kubectl apply -f my-scheduler.yaml
+Validate the pod		# kubectl get pod
+Now launch a new pod and check which scheduler are used by same pod or different pod.
+kubectl apply -f pod.yaml
+verify by which schedule the said pod was launched. 
+kubectl describe pod mypod
