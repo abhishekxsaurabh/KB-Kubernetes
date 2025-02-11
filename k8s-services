@@ -1,0 +1,86 @@
+########################
+#### K8S – SERVICES ####
+########################
+	1)	When using “RC (Replication Controller)”, Pods ae terminated and created during scaling or replication operations. 
+	2)	When using deployments, while updating the image version the Pods are terminated and new pods take the place of other Pods. 
+	3)	Pods are very dynamic i.e. they come and go on the K8S cluster and on any of the available nodes & it would be difficult to access the pods as the pods IP changes once its recreated. 
+	4)	Service Object is an logical bridge between pods and end users, which provide virtual IP (VIP)
+	5)	Service allows clients to reliably connect to the containers running in the Pod using the VIP. 
+	6)	The VIP is not an actual IP connects to a network interface but its purpose is purely to forward traffic to one or more pods.
+	7)	Kube-proxy is the one which keeps the mapping between the VIP and the pods up to date, which queries the API server to learn about new services in the cluster. 
+	8)	Although each pod has a unique IP address, those IP’s are not exposed outside the cluster. 
+	9)	Service helps to expose the VIP mapped to the pods and allows application to receive traffic. 
+	10)	Labels are used to select which are the Pods to be put under a Service. 
+	11)	Creating a service will create an endpoint to access the Pods/application in it. 
+	12)	Service can be exposed in different ways by specifying a type in the service specifications – 
+				•	Cluster IP
+				•	Node Port
+				•	Load Balancer
+				•	Headless
+	13)	By default service can run only between ports 30000 – 32767. 
+	14)	The set of Pods targeted by a service is usually determined by a selector.
+	15)	There are 4 types of services
+				•	Cluster IP (Defaults)
+				•	Node Port
+				•	Load Balancer
+				•	Headless
+
+**NB - Hierarchy of the Services. 
+					Node Port --> Cluster IP --> NODE --> POD --> Container --> application
+
+##################################################
+##### CONFIGURE SERVICES AGAINST CLUSTER IP ######
+##################################################
+	
+	Step-1- Create a Deployment First.
+				# kubectl create deployment httpd-app --image httpd:2.4.62-alpine --port 80 --dry-run=client -o yaml > deploy-httpd.yaml
+	
+	Step-2- Create a Service for Cluster IP
+				# kubectl create service clusterip httpd-app --tcp=80:80 --dry-run=client -o yaml > http-service.yaml
+
+	Step-3- Check the POD Status now. 
+				# kubectl get pod -o wide
+
+	Step-4- Ping the Service IP for application to be running. 
+				# curl 10.97.240.94:80
+
+
+
+
+
+
+
+
+
+
+##################################################
+###### CONFIGURE SERVICES AGAINST NODE PORT ######
+##################################################
+		Step-1- Create a Deployment First.
+					# kubectl create deployment httpd-app --image httpd:2.4.62-alpine --port 80 --dry-run=client -o yaml > deploy-httpd.yaml
+	 
+		Step-2- Create a Service for NODE PORT
+					# kubectl create service clusterip httpd-app --tcp=80:80 --dry-run=client -o yaml > http-service.yaml		 	
+
+		Step-3- Check the POD Status now. 
+					# kubectl get pod -o wide
+
+		Step-4- Ping the Service IP for application to be running. 
+					# curl 10.97.240.94:80
+
+
+
+
+
+
+
+
+For PODs
+# kubectl expose pod <PodName> --port <PortNo> --target-port <PortNo> --name <ServiceName>
+# kubectl expose pod dns-resolver --port 8080 --target-port 80 --name dns-resolver-service
+# kubectl expose pod redis --port=6379 --name redis-service
+
+For Deployments
+# kubectl expose deployment <DeployName> --port <PortNo> --target-port <80> --name <ServiceName>
+# kubectl expose deployment dns-resolver --port 8080 --target-port 80 --name dns-resolver-service
+
